@@ -1,0 +1,1094 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Drink Counter</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            min-height: 100vh;
+            padding: 20px;
+            color: #333;
+        }
+
+        .container {
+            max-width: 400px;
+            margin: 0 auto;
+            position: relative;
+        }
+
+        .settings-btn {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: rgba(255, 255, 255, 0.9);
+            border: 2px solid #2a5298;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            font-size: 20px;
+            color: #2a5298;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s;
+            z-index: 100;
+        }
+
+        .settings-btn:hover {
+            background: #2a5298;
+            color: white;
+            transform: rotate(90deg);
+        }
+
+        .header {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 20px;
+            border-radius: 15px 15px 0 0;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            font-size: 24px;
+            margin-bottom: 15px;
+            color: #2a5298;
+        }
+
+        .add-drink-section {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        input[type="text"] {
+            flex: 1;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 16px;
+            outline: none;
+            transition: border-color 0.3s;
+        }
+
+        input[type="text"]:focus {
+            border-color: #2a5298;
+        }
+
+        .btn-add {
+            padding: 12px 20px;
+            background: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+
+        .btn-add:hover {
+            background: #45a049;
+        }
+
+        .drinks-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            background: white;
+            padding: 15px;
+            border-radius: 0 0 15px 15px;
+        }
+
+        .drink-btn {
+            position: relative;
+            padding: 10px 10px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 19px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 60px;
+            width: 100%;
+        }
+
+        .drink-btn:active {
+            transform: scale(0.95);
+        }
+
+        .drink-btn:hover {
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+        }
+
+        .drink-count {
+            position: absolute;
+            top: 5px;
+            right: 5px;
+            background: rgba(255, 255, 255, 0.9);
+            color: #764ba2;
+            border-radius: 50%;
+            width: 24px;
+            height: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            font-weight: bold;
+        }
+
+        .delete-btn {
+            position: absolute;
+            top: 5px;
+            left: 5px;
+            background: rgba(255, 59, 48, 0.9);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 24px;
+            height: 24px;
+            font-size: 14px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1;
+        }
+
+        .delete-btn:hover {
+            background: rgba(255, 59, 48, 1);
+            transform: scale(1.1);
+        }
+
+        .history-section {
+            margin-top: 20px;
+            background: rgba(255, 255, 255, 0.95);
+            padding: 10px 0;
+            margin-top: 20px;
+            background: rgba(255, 255, 255, 0.95);
+            padding: 20px;
+            border-radius: 15px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .settings-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 0;
+        }
+
+        .settings-label {
+            font-size: 14px;
+            color: #666;
+        }
+
+        .time-input {
+            padding: 5px 10px;
+            border: 1px solid #e0e0e0;
+            border-radius: 5px;
+            font-size: 14px;
+        }
+
+        .day-group {
+            margin-bottom: 15px;
+            background: #f5f5f5;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        .day-header {
+            padding: 15px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: background 0.3s;
+        }
+
+        .day-header:hover {
+            background: linear-gradient(135deg, #764ba2 0%, #667eea 100%);
+        }
+
+        .day-title {
+            font-weight: bold;
+            font-size: 14px;
+        }
+
+        .day-summary {
+            font-size: 12px;
+            opacity: 0.9;
+        }
+
+        .day-content {
+            padding: 10px;
+            display: none;
+        }
+
+        .day-content.expanded {
+            display: block;
+        }
+
+        .expand-icon {
+            transition: transform 0.3s;
+        }
+
+        .day-header.expanded .expand-icon {
+            transform: rotate(180deg);
+        }
+
+        .history-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        h2 {
+            font-size: 20px;
+            color: #2a5298;
+        }
+
+        .btn-clear {
+            padding: 8px 15px;
+            background: #ff5252;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-size: 14px;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+
+        .btn-clear:hover {
+            background: #ff1744;
+        }
+
+        .btn-clear-small {
+            padding: 6px 12px;
+            background: #f0f0f0;
+            color: #666;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 12px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .btn-clear-small:hover {
+            background: #ff5252;
+            color: white;
+            border-color: #ff5252;
+        }
+
+        .history-list {
+            max-height: 300px;
+            overflow-y: auto;
+        }
+
+        .history-item {
+            padding: 10px;
+            margin-bottom: 8px;
+            background: #f5f5f5;
+            border-radius: 8px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 14px;
+        }
+
+        .history-delete-btn {
+            background: #ff5252;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            font-size: 12px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background 0.3s;
+        }
+
+        .history-delete-btn:hover {
+            background: #ff1744;
+        }
+
+        .history-time {
+            color: #666;
+            font-size: 12px;
+        }
+
+        .history-drink {
+            font-weight: bold;
+            color: #2a5298;
+        }
+
+        .summary {
+            margin-top: 15px;
+            padding: 15px;
+            background: linear-gradient(135deg, rgba(102, 126, 234, 0.3) 0%, rgba(118, 75, 162, 0.3) 100%);
+            border-radius: 10px;
+            color: #333;
+        }
+
+        .summary-title {
+            font-size: 16px;
+            margin-bottom: 10px;
+        }
+
+        .summary-items {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .summary-item {
+            background: rgba(255, 255, 255, 0.6);
+            padding: 8px 15px;
+            border-radius: 8px;
+            font-size: 18px;
+            font-weight: bold;
+            color: #2a5298;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 40px 20px;
+            color: #999;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            animation: fadeIn 0.3s;
+        }
+
+        .modal.show {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-content {
+            background-color: white;
+            border-radius: 15px;
+            width: 90%;
+            max-width: 500px;
+            max-height: 80vh;
+            display: flex;
+            flex-direction: column;
+            animation: slideUp 0.3s;
+        }
+
+        .modal-header {
+            padding: 20px;
+            border-bottom: 1px solid #e0e0e0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .modal-title {
+            font-size: 20px;
+            color: #2a5298;
+            font-weight: bold;
+        }
+
+        .modal-close {
+            background: none;
+            border: none;
+            font-size: 24px;
+            color: #999;
+            cursor: pointer;
+            padding: 0;
+            width: 30px;
+            height: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-close:hover {
+            color: #333;
+        }
+
+        .modal-body {
+            padding: 20px;
+            overflow-y: auto;
+            flex: 1;
+        }
+
+        .today-section {
+            margin-top: 20px;
+            background: rgba(255, 255, 255, 0.95);
+            padding: 20px;
+            border-radius: 15px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .today-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .today-title {
+            font-size: 18px;
+            color: #2a5298;
+            font-weight: bold;
+        }
+
+        .today-summary {
+            background: linear-gradient(135deg, rgba(102, 126, 234, 0.3) 0%, rgba(118, 75, 162, 0.3) 100%);
+            border-radius: 10px;
+            padding: 15px;
+            color: #333;
+            margin-bottom: 15px;
+        }
+
+        .today-list {
+            max-height: 200px;
+            overflow-y: auto;
+        }
+
+        .btn-show-history {
+            padding: 12px 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+            margin-top: 20px;
+            width: 100%;
+        }
+
+        .btn-show-history:hover {
+            transform: scale(1.02);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes slideUp {
+            from {
+                transform: translateY(50px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        @media (max-width: 360px) {
+            .drinks-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <button class="settings-btn" onclick="showSettingsModal()">⚙️</button>
+        <div class="header">
+            <h1>🍺 Drink Counter</h1>
+            <div class="add-drink-section">
+                <input type="text" id="drinkInput" placeholder="飲み物を追加 (例: テキーラ)">
+                <button class="btn-add" onclick="addDrink()">追加</button>
+            </div>
+        </div>
+        
+        <div class="drinks-grid" id="drinksGrid">
+            <div class="empty-state">飲み物を追加してください</div>
+        </div>
+
+        <div class="today-section" id="todaySection" style="display: none;">
+            <div class="today-header">
+                <h3 class="today-title" id="todayTitle">今日の記録</h3>
+            </div>
+            <div class="today-summary" id="todaySummary">
+                <div class="summary-items" id="todaySummaryItems"></div>
+            </div>
+            <div class="today-list" id="todayList">
+                <!-- Today's items will be rendered here -->
+            </div>
+        </div>
+
+        <button class="btn-show-history" onclick="showHistoryModal()">📝 履歴を表示</button>
+
+        <!-- History Modal -->
+        <div id="historyModal" class="modal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h2 class="modal-title">📝 履歴</h2>
+                    <button class="modal-close" onclick="closeHistoryModal()">×</button>
+                </div>
+                <div class="modal-body">
+                    <div class="history-list" id="historyList">
+                        <div class="empty-state">まだ記録がありません</div>
+                    </div>
+                    <div id="clearButtonContainer" style="display: none; justify-content: center; margin-top: 20px;">
+                        <button class="btn-clear-small" onclick="clearHistory()">履歴をクリア</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Settings Modal -->
+        <div id="settingsModal" class="modal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h2 class="modal-title">⚙️ 設定</h2>
+                    <button class="modal-close" onclick="closeSettingsModal()">×</button>
+                </div>
+                <div class="modal-body">
+                    <div class="settings-item">
+                        <span class="settings-label">日付の区切り時間</span>
+                        <input type="time" id="cutoffTime" class="time-input" value="12:00" onchange="saveCutoffTime()">
+                    </div>
+                    <div class="settings-item">
+                        <span class="settings-label">タイムゾーン</span>
+                        <span id="timezoneDisplay" style="font-size: 14px; color: #666;"></span>
+                    </div>
+                    <div class="settings-item">
+                        <span class="settings-label">履歴クリアボタンを表示</span>
+                        <input type="checkbox" id="showClearButtonCheckbox" onchange="toggleClearButton()">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let drinks = [];
+        let history = [];
+        let cutoffHour = 12; // Default cutoff hour
+        let showClearButton = false; // Default: hide clear button
+
+        function loadData() {
+            const savedDrinks = localStorage.getItem('drinks');
+            const savedHistory = localStorage.getItem('history');
+            const savedCutoff = localStorage.getItem('cutoffHour');
+            
+            if (savedDrinks) {
+                drinks = JSON.parse(savedDrinks);
+            }
+            
+            if (savedHistory) {
+                history = JSON.parse(savedHistory);
+            }
+            
+            if (savedCutoff) {
+                cutoffHour = parseInt(savedCutoff);
+                const cutoffTime = document.getElementById('cutoffTime');
+                if (cutoffTime) {
+                    cutoffTime.value = `${String(cutoffHour).padStart(2, '0')}:00`;
+                }
+            }
+            
+            const savedShowClear = localStorage.getItem('showClearButton');
+            if (savedShowClear !== null) {
+                showClearButton = savedShowClear === 'true';
+                const checkbox = document.getElementById('showClearButtonCheckbox');
+                if (checkbox) {
+                    checkbox.checked = showClearButton;
+                }
+            }
+            
+            renderDrinks();
+            renderTodaySection();
+        }
+
+        function saveData() {
+            localStorage.setItem('drinks', JSON.stringify(drinks));
+            localStorage.setItem('history', JSON.stringify(history));
+        }
+
+        function addDrink() {
+            const input = document.getElementById('drinkInput');
+            const drinkName = input.value.trim();
+            
+            if (drinkName && !drinks.some(d => d.name === drinkName)) {
+                drinks.push({ name: drinkName, count: 0 });
+                input.value = '';
+                saveData();
+                renderDrinks();
+            }
+        }
+
+        function deleteDrink(index) {
+            if (confirm(`${drinks[index].name}を削除しますか？`)) {
+                drinks.splice(index, 1);
+                saveData();
+                renderDrinks();
+            }
+        }
+
+        function recordDrink(index) {
+            const drink = drinks[index];
+            drink.count++;
+            
+            const now = new Date();
+            const timestamp = now.getTime();
+            
+            history.unshift({
+                drink: drink.name,
+                timestamp: timestamp
+            });
+            
+            saveData();
+            renderDrinks();
+            renderTodaySection();
+            if (document.getElementById('historyModal') && document.getElementById('historyModal').classList.contains('show')) {
+                renderHistory();
+            }
+        }
+
+        function renderDrinks() {
+            const grid = document.getElementById('drinksGrid');
+            
+            if (drinks.length === 0) {
+                grid.innerHTML = '<div class="empty-state">飲み物を追加してください</div>';
+                return;
+            }
+            
+            grid.innerHTML = drinks.map((drink, index) => {
+                return `
+                    <div style="position: relative;">
+                        <button class="drink-btn" onclick="recordDrink(${index})">
+                            <span>${drink.name}</span>
+                        </button>
+                        <button class="delete-btn" onclick="deleteDrink(${index})">×</button>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function getDrinkEmoji(drinkName) {
+            const emojiMap = {
+                'ビール': '🍺',
+                'beer': '🍺',
+                'ハイボール': '🥃',
+                'highball': '🥃',
+                'ウイスキー': '🥃',
+                'whisky': '🥃',
+                'whiskey': '🥃',
+                'テキーラ': '🥃',
+                'tequila': '🥃',
+                'ワイン': '🍷',
+                'wine': '🍷',
+                '日本酒': '🍶',
+                'sake': '🍶',
+                'カクテル': '🍹',
+                'cocktail': '🍹',
+                'モヒート': '🍹',
+                'mojito': '🍹',
+                'マティーニ': '🍸',
+                'martini': '🍸',
+                'シャンパン': '🍾',
+                'champagne': '🍾',
+                'ジン': '🍸',
+                'gin': '🍸',
+                'ウォッカ': '🍸',
+                'vodka': '🍸',
+                'ラム': '🥃',
+                'rum': '🥃',
+                '焼酎': '🍶',
+                'shochu': '🍶',
+                '梅酒': '🍶',
+                'umeshu': '🍶'
+            };
+            
+            const lowerName = drinkName.toLowerCase();
+            for (const [key, emoji] of Object.entries(emojiMap)) {
+                if (lowerName.includes(key)) {
+                    return emoji;
+                }
+            }
+            return '🥤';
+        }
+
+        function formatLocalTime(timestamp) {
+            // Convert timestamp to local time for display
+            const date = new Date(timestamp);
+            const year = date.getFullYear();
+            const month = String(date.getMonth() + 1).padStart(2, '0');
+            const day = String(date.getDate()).padStart(2, '0');
+            const hours = String(date.getHours()).padStart(2, '0');
+            const minutes = String(date.getMinutes()).padStart(2, '0');
+            const seconds = String(date.getSeconds()).padStart(2, '0');
+            return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
+        }
+
+        function getDayKey(timestamp) {
+            const date = new Date(timestamp);
+            
+            // Get local date and time
+            const localYear = date.getFullYear();
+            const localMonth = date.getMonth();
+            const localDay = date.getDate();
+            const localHour = date.getHours();
+            
+            
+            // Create adjusted date based on cutoff hour
+            let adjustedDate = new Date(localYear, localMonth, localDay);
+            
+            // If current hour is before cutoff, this record belongs to previous day
+            if (localHour < cutoffHour) {
+                adjustedDate.setDate(adjustedDate.getDate() - 1);
+            }
+            
+            // Return date string in local timezone
+            const year = adjustedDate.getFullYear();
+            const month = String(adjustedDate.getMonth() + 1).padStart(2, '0');
+            const day = String(adjustedDate.getDate()).padStart(2, '0');
+            
+            return `${year}-${month}-${day}`;
+        }
+
+        function getDayOfWeek(dateStr) {
+            const days = ['日曜日', '月曜日', '火曜日', '水曜日', '木曜日', '金曜日', '土曜日'];
+            const date = new Date(dateStr + 'T12:00:00');
+            return days[date.getDay()];
+        }
+
+        function getDateRange(dateStr) {
+            // Parse the date string and create start date at cutoff hour in local time
+            const [year, month, day] = dateStr.split('-').map(Number);
+            const startDate = new Date(year, month - 1, day, cutoffHour, 0, 0);
+            const endDate = new Date(startDate);
+            endDate.setDate(endDate.getDate() + 1);
+            
+            return {
+                start: startDate.getTime(),
+                end: endDate.getTime()
+            };
+        }
+
+        function getCurrentDayKey() {
+            const now = new Date();
+            return getDayKey(now.getTime());
+        }
+
+        function renderTodaySection() {
+            const todaySection = document.getElementById('todaySection');
+            const todayTitle = document.getElementById('todayTitle');
+            const todaySummaryItems = document.getElementById('todaySummaryItems');
+            const todayList = document.getElementById('todayList');
+            
+            const currentDayKey = getCurrentDayKey();
+            const dayOfWeek = getDayOfWeek(currentDayKey);
+            
+            // Filter today's history
+            const todayHistory = history.filter(item => 
+                getDayKey(item.timestamp) === currentDayKey
+            );
+            
+            if (todayHistory.length === 0) {
+                todaySection.style.display = 'none';
+                return;
+            }
+            
+            todaySection.style.display = 'block';
+            todayTitle.textContent = `${currentDayKey} ${dayOfWeek} の記録`;
+            
+            // Calculate summary
+            const summary = {};
+            todayHistory.forEach(h => {
+                summary[h.drink] = (summary[h.drink] || 0) + 1;
+            });
+            
+            const totalDrinks = Object.values(summary).reduce((sum, count) => sum + count, 0);
+            
+            todaySummaryItems.innerHTML = `
+                <div style="margin-bottom: 10px; font-size: 20px; font-weight: bold;">合計: ${totalDrinks}杯</div>
+                <div style="display: flex; flex-wrap: wrap; gap: 10px;">
+                    ${Object.entries(summary)
+                        .map(([drink, count]) => `<span class="summary-item">${drink}: ${count}杯</span>`)
+                        .join('')}
+                </div>
+            `;
+            
+            // Render today's items (sorted by timestamp descending - newest first)
+            todayList.innerHTML = todayHistory
+                .sort((a, b) => b.timestamp - a.timestamp)
+                .map((item) => {
+                    const globalIndex = history.findIndex(h => h.timestamp === item.timestamp);
+                    return `
+                        <div class="history-item">
+                            <span class="history-drink">${item.drink}</span>
+                            <div style="display: flex; gap: 10px; align-items: center;">
+                                <span class="history-time">${formatLocalTime(item.timestamp)}</span>
+                                <button class="history-delete-btn" onclick="deleteHistoryItem(${globalIndex})">×</button>
+                            </div>
+                        </div>
+                    `;
+                }).join('');
+        }
+
+        function renderHistory() {
+            const historyList = document.getElementById('historyList');
+            
+            if (history.length === 0) {
+                historyList.innerHTML = '<div class="empty-state">まだ記録がありません</div>';
+                return;
+            }
+            
+            // Group history by adjusted days
+            const dayGroups = {};
+            history.forEach(item => {
+                const dayKey = getDayKey(item.timestamp);
+                if (!dayGroups[dayKey]) {
+                    dayGroups[dayKey] = [];
+                }
+                dayGroups[dayKey].push(item);
+            });
+            
+            // Sort days in descending order and exclude today
+            const currentDayKey = getCurrentDayKey();
+            const sortedDays = Object.keys(dayGroups)
+                .filter(day => day !== currentDayKey)
+                .sort((a, b) => b.localeCompare(a));
+            
+            historyList.innerHTML = sortedDays.map(dayKey => {
+                const dayData = dayGroups[dayKey];
+                const dayOfWeek = getDayOfWeek(dayKey);
+                
+                // Calculate summary for this day
+                const summary = {};
+                dayData.forEach(h => {
+                    summary[h.drink] = (summary[h.drink] || 0) + 1;
+                });
+                
+                const totalDrinks = Object.values(summary).reduce((sum, count) => sum + count, 0);
+                const drinkTypes = Object.keys(summary).length;
+                
+                return `
+                    <div class="day-group">
+                        <div class="day-header" onclick="toggleDay('${dayKey}')" id="header-${dayKey}">
+                            <div>
+                                <div class="day-title">${dayKey} ${dayOfWeek}</div>
+                                <div class="day-summary">合計: ${totalDrinks}杯</div>
+                            </div>
+                            <span class="expand-icon">▼</span>
+                        </div>
+                        <div class="day-content" id="content-${dayKey}">
+                            <div class="summary" style="margin-bottom: 10px;">
+                                <div class="summary-items">
+                                    ${Object.entries(summary)
+                                        .map(([drink, count]) => `<span class="summary-item">${drink}: ${count}杯</span>`)
+                                        .join('')}
+                                </div>
+                            </div>
+                            ${dayData
+                                .sort((a, b) => b.timestamp - a.timestamp)
+                                .map((item, idx) => {
+                                    const globalIndex = history.findIndex(h => h.timestamp === item.timestamp);
+                                    return `
+                                        <div class="history-item">
+                                            <span class="history-drink">${item.drink}</span>
+                                            <div style="display: flex; gap: 10px; align-items: center;">
+                                                <span class="history-time">${formatLocalTime(item.timestamp)}</span>
+                                                <button class="history-delete-btn" onclick="deleteHistoryItem(${globalIndex})">×</button>
+                                            </div>
+                                        </div>
+                                    `;
+                                }).join('')}
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function toggleDay(dayKey) {
+            const header = document.getElementById(`header-${dayKey}`);
+            const content = document.getElementById(`content-${dayKey}`);
+            
+            header.classList.toggle('expanded');
+            content.classList.toggle('expanded');
+        }
+
+        function saveCutoffTime() {
+            const cutoffTime = document.getElementById('cutoffTime').value;
+            const [hours] = cutoffTime.split(':');
+            cutoffHour = parseInt(hours);
+            localStorage.setItem('cutoffHour', cutoffHour);
+            renderTodaySection();
+            if (document.getElementById('historyModal') && document.getElementById('historyModal').classList.contains('show')) {
+                renderHistory();
+            }
+        }
+
+        function deleteHistoryItem(index) {
+            const item = history[index];
+            if (confirm(`${item.drink} (${formatLocalTime(item.timestamp)}) を削除しますか？`)) {
+                // Remove from history
+                history.splice(index, 1);
+                
+                // Decrease count for the drink
+                const drink = drinks.find(d => d.name === item.drink);
+                if (drink && drink.count > 0) {
+                    drink.count--;
+                }
+                
+                saveData();
+                renderDrinks();
+                renderTodaySection();
+                if (document.getElementById('historyModal') && document.getElementById('historyModal').classList.contains('show')) {
+                    renderHistory();
+                }
+            }
+        }
+
+        function showSettingsModal() {
+            const modal = document.getElementById('settingsModal');
+            modal.classList.add('show');
+            displayTimezone();
+        }
+
+        function closeSettingsModal() {
+            const modal = document.getElementById('settingsModal');
+            modal.classList.remove('show');
+        }
+
+        function showHistoryModal() {
+            const modal = document.getElementById('historyModal');
+            modal.classList.add('show');
+            renderHistory();
+            updateClearButtonVisibility();
+        }
+        
+        function updateClearButtonVisibility() {
+            const container = document.getElementById('clearButtonContainer');
+            if (container) {
+                container.style.display = showClearButton ? 'flex' : 'none';
+            }
+        }
+        
+        function toggleClearButton() {
+            const checkbox = document.getElementById('showClearButtonCheckbox');
+            showClearButton = checkbox.checked;
+            localStorage.setItem('showClearButton', showClearButton);
+            updateClearButtonVisibility();
+        }
+
+        function closeHistoryModal() {
+            const modal = document.getElementById('historyModal');
+            modal.classList.remove('show');
+        }
+
+        function clearHistory() {
+            if (confirm('履歴をすべて削除しますか？')) {
+                history = [];
+                drinks.forEach(d => d.count = 0);
+                saveData();
+                renderDrinks();
+                renderTodaySection();
+                renderHistory();
+            }
+        }
+
+        // Enter key support
+        document.getElementById('drinkInput').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                addDrink();
+            }
+        });
+
+        // Display timezone information
+        function displayTimezone() {
+            const timezoneDisplay = document.getElementById('timezoneDisplay');
+            if (timezoneDisplay) {
+                const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+                const offset = new Date().getTimezoneOffset();
+                const offsetHours = Math.floor(Math.abs(offset) / 60);
+                const offsetMinutes = Math.abs(offset) % 60;
+                const offsetSign = offset <= 0 ? '+' : '-';
+                const offsetString = `UTC${offsetSign}${String(offsetHours).padStart(2, '0')}:${String(offsetMinutes).padStart(2, '0')}`;
+                
+                timezoneDisplay.textContent = `${timezone} (${offsetString})`;
+            }
+        }
+        
+        // Debug function
+        window.debugTimeHandling = function() {
+            console.log('=== Time Handling Debug ===');
+            console.log('Cutoff Hour:', cutoffHour);
+            console.log('Timezone:', Intl.DateTimeFormat().resolvedOptions().timeZone);
+            
+            history.slice(0, 5).forEach((item, idx) => {
+                const timestamp = item.timestamp;
+                const date = new Date(timestamp);
+                const dayKey = getDayKey(timestamp);
+                
+                console.log(`\nItem ${idx}:`);
+                console.log('  Timestamp:', timestamp);
+                console.log('  Local time from timestamp:', date.toString());
+                console.log('  Local hour:', date.getHours());
+                console.log('  Formatted local time:', formatLocalTime(timestamp));
+                console.log('  Day key:', dayKey);
+                console.log('  Should adjust?', date.getHours() < cutoffHour);
+            });
+        };
+        
+        // Test function to check formatLocalTime
+        window.testFormatLocalTime = function(timestamp) {
+            console.log('Input timestamp:', timestamp);
+            console.log('Date object:', new Date(timestamp).toString());
+            console.log('Formatted local:', formatLocalTime(timestamp));
+        };
+        
+        // Load data on page load
+        loadData();
+        displayTimezone();
+        renderTodaySection();
+        updateClearButtonVisibility();
+        
+        // Close modal when clicking outside
+        window.addEventListener('load', function() {
+            document.getElementById('historyModal').addEventListener('click', function(e) {
+                if (e.target === this) {
+                    closeHistoryModal();
+                }
+            });
+            document.getElementById('settingsModal').addEventListener('click', function(e) {
+                if (e.target === this) {
+                    closeSettingsModal();
+                }
+            });
+        });
+    </script>
+</body>
+</html>
