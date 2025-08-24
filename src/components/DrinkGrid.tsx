@@ -17,7 +17,7 @@ export function DrinkGrid() {
                 class="drink-btn"
                 onClick={() => drinkStore.recordDrink(index())}
               >
-                <span>{drink.name}</span>
+                <span>{drink.name}を記録</span>
               </button>
               <button
                 class="delete-btn"
