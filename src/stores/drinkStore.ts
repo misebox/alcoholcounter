@@ -101,9 +101,9 @@ export const drinkStore = {
     storage.saveHistory(state.history);
   },
   
-  updateCutoffHour(hour: number) {
-    setState('settings', 'cutoffHour', hour);
-    storage.saveCutoffHour(hour);
+  updateCutOffTime(time: string) {
+    setState('settings', 'cutOffTime', time);
+    storage.saveCutOffTime(time);
   },
   
   toggleShowClearButton(show: boolean) {
@@ -120,18 +120,18 @@ export const drinkStore = {
   },
   
   getTodayHistory() {
-    const currentDayKey = getCurrentDayKey(state.settings.cutoffHour);
+    const currentDayKey = getCurrentDayKey(state.settings.cutOffTime);
     return state.history.filter(item => 
-      getDayKey(item.timestamp, state.settings.cutoffHour) === currentDayKey
+      getDayKey(item.timestamp, state.settings.cutOffTime) === currentDayKey
     );
   },
   
   getHistoryByDay() {
-    const currentDayKey = getCurrentDayKey(state.settings.cutoffHour);
+    const currentDayKey = getCurrentDayKey(state.settings.cutOffTime);
     const dayGroups: Record<string, HistoryItem[]> = {};
     
     state.history.forEach(item => {
-      const dayKey = getDayKey(item.timestamp, state.settings.cutoffHour);
+      const dayKey = getDayKey(item.timestamp, state.settings.cutOffTime);
       if (dayKey !== currentDayKey) {
         if (!dayGroups[dayKey]) {
           dayGroups[dayKey] = [];

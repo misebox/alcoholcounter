@@ -7,21 +7,16 @@ export function SettingsModal() {
   
   const handleCutoffTimeChange = (e: InputEvent) => {
     const input = e.currentTarget as HTMLInputElement;
-    const [hours] = input.value.split(':');
-    const hour = parseInt(hours ?? '12', 10);
-    if (!isNaN(hour)) {
-      drinkStore.updateCutoffHour(hour);
+    const value = input.value;
+    // Validate HH:MM format
+    if (/^([0-1]?[0-9]|2[0-3]):[0-5][0-9]$/.test(value)) {
+      drinkStore.updateCutOffTime(value);
     }
   };
   
   const handleShowClearToggle = (e: InputEvent) => {
     const checkbox = e.currentTarget as HTMLInputElement;
     drinkStore.toggleShowClearButton(checkbox.checked);
-  };
-  
-  const formatCutoffTime = () => {
-    const hour = String(state.settings.cutoffHour).padStart(2, '0');
-    return `${hour}:00`;
   };
 
   return (
@@ -44,7 +39,7 @@ export function SettingsModal() {
               <input
                 type="time"
                 class="time-input"
-                value={formatCutoffTime()}
+                value={state.settings.cutOffTime}
                 onInput={handleCutoffTimeChange}
               />
             </div>

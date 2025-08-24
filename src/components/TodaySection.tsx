@@ -20,7 +20,7 @@ export function TodaySection() {
   );
   
   const currentDayKey = createMemo(() => 
-    getCurrentDayKey(state.settings.cutoffHour)
+    getCurrentDayKey(state.settings.cutOffTime)
   );
   
   const dayOfWeek = createMemo(() => 

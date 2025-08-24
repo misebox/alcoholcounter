@@ -9,6 +9,6 @@ export interface HistoryItem {
 }
 
 export interface Settings {
-  cutoffHour: number;
+  cutOffTime: string; // Format: "HH:MM"
   showClearButton: boolean;
 }

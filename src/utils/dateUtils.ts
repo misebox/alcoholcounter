@@ -9,17 +9,25 @@ export function formatLocalTime(timestamp: number): string {
   return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
 }
 
-export function getDayKey(timestamp: number, cutoffHour: number): string {
+export function getDayKey(timestamp: number, cutOffTime: string): string {
   const date = new Date(timestamp);
   
   const localYear = date.getFullYear();
   const localMonth = date.getMonth();
   const localDay = date.getDate();
   const localHour = date.getHours();
+  const localMinute = date.getMinutes();
+  
+  // Parse cutoff time (HH:MM format)
+  const [cutoffHour, cutoffMinute] = cutOffTime.split(':').map(Number);
   
   let adjustedDate = new Date(localYear, localMonth, localDay);
   
-  if (localHour < cutoffHour) {
+  // Check if current time is before cutoff time
+  const currentMinutes = localHour * 60 + localMinute;
+  const cutoffMinutes = cutoffHour * 60 + cutoffMinute;
+  
+  if (currentMinutes < cutoffMinutes) {
     adjustedDate.setDate(adjustedDate.getDate() - 1);
   }
   
@@ -36,9 +44,9 @@ export function getDayOfWeek(dateStr: string): string {
   return days[date.getDay()] ?? '';
 }
 
-export function getCurrentDayKey(cutoffHour: number): string {
+export function getCurrentDayKey(cutOffTime: string): string {
   const now = new Date();
-  return getDayKey(now.getTime(), cutoffHour);
+  return getDayKey(now.getTime(), cutOffTime);
 }
 
 export function getTimezoneInfo(): string {

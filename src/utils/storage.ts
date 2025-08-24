@@ -3,7 +3,8 @@ import type { Drink, HistoryItem, Settings } from '@/types';
 const STORAGE_KEYS = {
   DRINKS: 'drinks',
   HISTORY: 'history',
-  CUTOFF_HOUR: 'cutoffHour',
+  CUTOFF_TIME: 'cutOffTime',
+  CUTOFF_HOUR: 'cutoffHour', // Legacy key for migration
   SHOW_CLEAR_BUTTON: 'showClearButton',
 } as const;
 
@@ -27,17 +28,31 @@ export const storage = {
   },
 
   getSettings(): Settings {
-    const cutoffHour = localStorage.getItem(STORAGE_KEYS.CUTOFF_HOUR);
+    let cutOffTime = localStorage.getItem(STORAGE_KEYS.CUTOFF_TIME);
+    
+    // Migration from old cutoffHour to new cutOffTime format
+    if (!cutOffTime) {
+      const legacyHour = localStorage.getItem(STORAGE_KEYS.CUTOFF_HOUR);
+      if (legacyHour) {
+        const hour = parseInt(legacyHour, 10);
+        cutOffTime = `${hour.toString().padStart(2, '0')}:00`;
+        localStorage.setItem(STORAGE_KEYS.CUTOFF_TIME, cutOffTime);
+        localStorage.removeItem(STORAGE_KEYS.CUTOFF_HOUR);
+      } else {
+        cutOffTime = '09:00'; // Default to 9:00 AM
+      }
+    }
+    
     const showClearButton = localStorage.getItem(STORAGE_KEYS.SHOW_CLEAR_BUTTON);
     
     return {
-      cutoffHour: cutoffHour ? parseInt(cutoffHour, 10) : 12,
+      cutOffTime,
       showClearButton: showClearButton === 'true',
     };
   },
 
-  saveCutoffHour(hour: number): void {
-    localStorage.setItem(STORAGE_KEYS.CUTOFF_HOUR, hour.toString());
+  saveCutOffTime(time: string): void {
+    localStorage.setItem(STORAGE_KEYS.CUTOFF_TIME, time);
   },
 
   saveShowClearButton(show: boolean): void {
